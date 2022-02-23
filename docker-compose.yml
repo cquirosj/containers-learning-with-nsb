@@ -11,7 +11,12 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
-  
+  Sales:
+    image: cquirosj/quickstart-sales:1
+    build:
+      context: .
+      dockerfile: Sales/Dockerfile
+    
   webserver:
     image: nginx
     ports:
