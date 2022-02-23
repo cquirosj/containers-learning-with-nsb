@@ -20,17 +20,21 @@ namespace ClientUI
                         .UseNServiceBus(context =>
                         {
                             var endpointConfiguration = new EndpointConfiguration("ClientUI");
-                            var transport = endpointConfiguration.UseTransport<LearningTransport>();
+                            endpointConfiguration.EnableInstallers();
+                            
+                            var transport = endpointConfiguration.UseTransport<RabbitMQTransport>();
+                            transport.ConnectionString("host=localhost;username=guest;password=guest");
+                            transport.UseConventionalRoutingTopology();
 
                             var routing = transport.Routing();
                             routing.RouteToEndpoint(typeof(PlaceOrder), "Sales");
 
                             endpointConfiguration.SendFailedMessagesTo("error");
                             endpointConfiguration.AuditProcessedMessagesTo("audit");
-                            endpointConfiguration.SendHeartbeatTo("Particular.ServiceControl");
-
-                            var metrics = endpointConfiguration.EnableMetrics();
-                            metrics.SendMetricDataToServiceControl("Particular.Monitoring", TimeSpan.FromMilliseconds(500));
+                            // endpointConfiguration.SendHeartbeatTo("Particular.ServiceControl");
+                            //
+                            // var metrics = endpointConfiguration.EnableMetrics();
+                            // metrics.SendMetricDataToServiceControl("Particular.Monitoring", TimeSpan.FromMilliseconds(500));
 
                             return endpointConfiguration;
                             

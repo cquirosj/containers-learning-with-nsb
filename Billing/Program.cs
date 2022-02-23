@@ -20,14 +20,18 @@ namespace Billing
                        {
                            var endpointConfiguration = new EndpointConfiguration("Billing");
 
-                           endpointConfiguration.UseTransport<LearningTransport>();
+                           endpointConfiguration.EnableInstallers();
+                            
+                           var transport = endpointConfiguration.UseTransport<RabbitMQTransport>();
+                           transport.ConnectionString("host=localhost;username=guest;password=guest");
+                           transport.UseConventionalRoutingTopology();
 
                            endpointConfiguration.SendFailedMessagesTo("error");
                            endpointConfiguration.AuditProcessedMessagesTo("audit");
-                           endpointConfiguration.SendHeartbeatTo("Particular.ServiceControl");
+                          // endpointConfiguration.SendHeartbeatTo("Particular.ServiceControl");
 
-                           var metrics = endpointConfiguration.EnableMetrics();
-                           metrics.SendMetricDataToServiceControl("Particular.Monitoring", TimeSpan.FromMilliseconds(500));
+                          // var metrics = endpointConfiguration.EnableMetrics();
+                          // metrics.SendMetricDataToServiceControl("Particular.Monitoring", TimeSpan.FromMilliseconds(500));
 
                            return endpointConfiguration;
                        });
